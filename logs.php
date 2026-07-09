@@ -70,7 +70,7 @@ $logs = obtenerLogsConUsuarios(); // Usamos la nueva función con JOIN
                 <tr>
                     <td><?php echo htmlspecialchars($log['fecha']); ?></td>
                     <td>
-                        <button class="rut-link" onclick="verInfoUsuario('<?php echo $rut; ?>', '<?php echo $nombreCompleto; ?>', '<?php echo $correo; ?>', '<?php echo $nacimiento; ?>', '<?php echo $direccion; ?>')">
+                        <button class="rut-link" onclick="verInfoUsuario('<?php echo $rut; ?>', '<?php echo $nombreCompleto; ?>', '<?php echo $correo; ?>', '<?php echo $nacimiento; ?>', '<?php echo $direccion; ?>', '<?php echo htmlspecialchars($log['ultima_ip'] ?? 'Desconocida'); ?>')">
                             <?php echo $rut; ?>
                         </button>
                     </td>
@@ -106,24 +106,25 @@ $logs = obtenerLogsConUsuarios(); // Usamos la nueva función con JOIN
                 <span class="info-label">Dirección</span>
                 <span class="info-value" id="modal-direccion"></span>
             </div>
+            <div class="info-row" style="border-bottom: none;">
+                <span class="info-label">Última IP de Ingreso</span>
+                <span class="info-value" id="modal-ip" style="font-family: monospace; color: #3b82f6;"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        function verInfoUsuario(rut, nombre, correo, fecha, direccion) {
+        function verInfoUsuario(rut, nombre, correo, fecha, direccion, ip) {
             // Llenamos el modal con los datos
             document.getElementById('modal-rut').innerText = rut;
             document.getElementById('modal-nombre').innerText = nombre.trim() !== '' ? nombre : 'Perfil Incompleto';
             document.getElementById('modal-correo').innerText = correo;
             document.getElementById('modal-fecha').innerText = fecha;
             document.getElementById('modal-direccion').innerText = direccion;
+            document.getElementById('modal-ip').innerText = ip; // <- Aquí insertamos la IP
             
             // Mostramos el modal
             document.getElementById('userInfoModal').classList.add('active');
-        }
-
-        function cerrarModal() {
-            document.getElementById('userInfoModal').classList.remove('active');
         }
     </script>
 </body>

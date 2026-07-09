@@ -75,6 +75,9 @@ function conectarBD() {
     try {
         $db->exec("ALTER TABLE usuarios ADD COLUMN rol TEXT DEFAULT 'usuario'");
     } catch (Exception $e) {}
+    // Intentar agregar columnas si la tabla ya existía de antes (falla en silencio si ya están)
+        try { $db->exec("ALTER TABLE usuarios ADD COLUMN rol TEXT DEFAULT 'usuario'"); } catch (Exception $e) {}
+        try { $db->exec("ALTER TABLE usuarios ADD COLUMN ip TEXT DEFAULT 'Desconocida'"); } catch (Exception $e) {}
     return $db;
 }
 // --- SISTEMA DE LOGS ---
@@ -134,8 +137,8 @@ function eliminarRegistro($id) {
 }
 function obtenerLogsConUsuarios() {
     $db = conectarBD();
-    // Hacemos un JOIN para traer los datos del usuario junto con su log
-    $stmt = $db->query("SELECT l.*, u.nombre, u.apellido, u.correo, u.fecha_nacimiento, u.direccion 
+    // Hacemos un JOIN y traemos u.ip como ultima_ip
+    $stmt = $db->query("SELECT l.*, u.nombre, u.apellido, u.correo, u.fecha_nacimiento, u.direccion, u.ip as ultima_ip 
                         FROM logs l 
                         LEFT JOIN usuarios u ON l.usuario = u.rut 
                         ORDER BY l.fecha DESC");

@@ -93,9 +93,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($user['verificado'] == 0) {
                 $error = "Debes verificar tu correo antes de iniciar sesión.";
             } else {
+                
+                // --- CAPTURAR IP REAL DEL USUARIO ---
+                $ip = 'Desconocida';
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    // Tomamos la primera IP si hay múltiples proxies
+                    $ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+                } else {
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'Desconocida';
+                }
+
+                // Guardar la nueva IP en el perfil del usuario
+                $stmtIp = $db->prepare("UPDATE usuarios SET ip = ? WHERE id = ?");
+                $stmtIp->execute([$ip, $user['id']]);
+
+                // Iniciar la sesión normalmente
                 $_SESSION['usuario_id'] = $user['id'];
                 $_SESSION['rut'] = $user['rut']; 
-                $_SESSION['rol'] = isset($user['rol']) ? $user['rol'] : 'usuario'; // Guardamos el rol
+                $_SESSION['rol'] = isset($user['rol']) ? $user['rol'] : 'usuario'; 
                 
                 registrarLog("Inició sesión en el sistema", $user['rut']);
                 
