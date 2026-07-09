@@ -126,6 +126,9 @@ $logs = obtenerLogsConUsuarios(); // Usamos la nueva función con JOIN
             // Mostramos el modal
             document.getElementById('userInfoModal').classList.add('active');
         }
+        function cerrarModal() {
+            document.getElementById('userInfoModal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
